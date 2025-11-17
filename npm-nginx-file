@@ -1,0 +1,24 @@
+server {
+    listen 80;
+    server_name sonu.didin.in;
+
+    root /var/www/public;
+    index index.php index.html;
+
+    # Handle all normal routes
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Pass PHP files to php-fpm running in Docker container
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass 127.0.0.1:9001;  # This forwards to container port 9000
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # Deny access to .env
+    location ~ /\.env {
+        deny all;
+    }
+}
