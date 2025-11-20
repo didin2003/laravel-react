@@ -1,5 +1,0 @@
-# 🚀 **DevOps Project: House-rental website Deployment Based on Production Level**
-
-**Deploying Jenkins on one region and Docker, Sonarqube are on another region**
-
-This project is a rental-property-management platform built using PHP and the Laravel framework, designed to enable tenants to browse and book properties, landlords or agents to list rentals, manage bookings, track occupancy and payments, coordinate maintenance requests, and generate reports—all supported by a robust DevOps infrastructure. Jenkins automatically builds the code, runs static code analysis via SonarQube, performs file-level vulnerability scanning with Trivy, builds a Docker image that it again scans with Trivy, then pushes the secured image to Docker Hub. Deploy the application in docker container and intergrated nginx for proxy method.

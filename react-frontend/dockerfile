@@ -1,0 +1,22 @@
+# Multi-stage Dockerfile for a Vite React app
+FROM node:18-alpine AS builder
+WORKDIR /app
+
+# Install dependencies (use npm ci when lockfile present)
+COPY package*.json ./
+RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
+
+# Copy source and build
+COPY . .
+RUN npm run build
+
+# Production image
+FROM nginx:stable-alpine
+# Clear default html
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy build output
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+EXPOSE 5000
+CMD ["nginx", "-g", "daemon off;"]
