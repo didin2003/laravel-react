@@ -15,7 +15,9 @@ RUN chmod -R 755 /app/node_modules/.bin
 # Copy all files
 COPY . .
 
-EXPOSE 5000
-
 # Build the React app
 RUN npm run build
+
+EXPOSE 5000
+
+CMD ["npm", "start"]
