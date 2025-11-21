@@ -2,37 +2,37 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Make /app owned by the node user
+# Ensure /app is owned by node user
 RUN mkdir -p /app && chown -R node:node /app
 
-# Switch to non-root user
+# Switch to node user
 USER node
 
-# Copy package files with correct ownership
+# Copy package files
 COPY --chown=node:node package*.json ./
 
 # Install dependencies
 RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
 
-# Copy the rest of the source
+# Explicitly create the .vite folder (or temp folder) with correct permissions
+RUN mkdir -p /app/node_modules/.vite && chown -R node:node /app/node_modules/.vite
+
+# Copy rest of the source
 COPY --chown=node:node . .
 
-# Make sure `node_modules/.bin` is in PATH so `vite` is executable
+# Ensure node_modules/.bin is in PATH
 ENV PATH /app/node_modules/.bin:$PATH
 
-# Run the build
+# Build
 RUN npm run build
 
-# (Optional) Use a slimmer image for runtime / serve static files
+# (Optional) Runner stage if you want to serve or export the build
 FROM node:18-alpine AS runner
 WORKDIR /app
-
-# Copy build output
 COPY --from=builder /app/dist ./dist
 
-# Install a static server
+# Install static server
 RUN npm install -g serve
 
-EXPOSE 3000
-
-CMD ["serve", "-s", "dist", "-l", "3000"]
+EXPOSE 5000
+CMD ["serve", "-s", "dist", "-l", "5000"]
