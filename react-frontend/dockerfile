@@ -2,13 +2,20 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+# Install bash + fix permissions issue (Alpine needs this)
+RUN apk add --no-cache bash
+
 COPY package.json package-lock.json ./
+
+# Install all dependencies including Vite
 RUN npm install
 
 COPY . .
 
-# Force Vite preview to run on port 5000
+# Fix Vite permission error
+RUN chmod -R 777 /app/node_modules/.bin
+
 EXPOSE 5000
 
-# Start production server
-CMD ["npm", "run", "preview", "--", "--host"]
+# Run Vite preview server on port 5000
+CMD ["npm", "run", "preview", "--", "--host", "--port", "5000"]
