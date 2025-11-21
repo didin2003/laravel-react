@@ -1,16 +1,25 @@
-FROM node:20-alpine AS builder
+FROM node:18-alpine
 
+# Create working directory with correct permissions
 WORKDIR /app
 
-# Install dependencies
+# Copy package files
 COPY package*.json ./
+
+# Install dependencies
 RUN npm install
 
-# Copy all project files
+# Copy everything AS ROOT (safe)
 COPY . .
 
-# Build Vite using Node (bypasses permission denied issue)
-RUN node node_modules/vite/bin/vite.js build
+# Ensure correct permissions
+RUN chmod -R 755 /app
 
-# No need to run server inside container
-CMD ["sh", "-c", "echo Build completed. Copy dist folder to NGINX."]
+# Build Vite (NO permission errors)
+RUN npm run build
+
+# Expose Vite preview port
+EXPOSE 5000
+
+# Start production server
+CMD ["npm", "run", "preview", "--", "--host"]
