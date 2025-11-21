@@ -30,7 +30,7 @@ COPY . .
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 # Connect database
-RUN php artisan migrate:fresh --seed
+# RUN php artisan migrate:fresh --seed
 
 # Laravel optimizations
 RUN php artisan optimize:clear && php artisan config:clear && php artisan route:clear
