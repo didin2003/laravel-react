@@ -10,4 +10,5 @@ COPY . .
 # Force Vite preview to run on port 5000
 EXPOSE 5000
 
-CMD ["npm", "run", "preview", "--", "--host", "--port", "5000"]
+# Start production server
+CMD ["npm", "run", "preview", "--", "--host"]
