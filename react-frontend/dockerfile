@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
 
 # Set working directory
 WORKDIR /app
@@ -8,6 +8,9 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install
+
+# Fix Vite permission issue (Alpine bug)
+RUN chmod -R 755 /app/node_modules/.bin
 
 # Copy all files
 COPY . .
