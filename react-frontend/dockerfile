@@ -1,23 +1,38 @@
-# Multi-stage Dockerfile for a Vite React app
 FROM node:18-alpine AS builder
+
 WORKDIR /app
 
-# Install dependencies (use npm ci when lockfile present)
-COPY package*.json ./
+# Make /app owned by the node user
+RUN mkdir -p /app && chown -R node:node /app
+
+# Switch to non-root user
+USER node
+
+# Copy package files with correct ownership
+COPY --chown=node:node package*.json ./
+
+# Install dependencies
 RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
 
-# Copy source and build
-COPY . .
+# Copy the rest of the source
+COPY --chown=node:node . .
+
+# Make sure `node_modules/.bin` is in PATH so `vite` is executable
+ENV PATH /app/node_modules/.bin:$PATH
+
+# Run the build
 RUN npm run build
 
-# Production image
-FROM nginx:stable-alpine
-# Clear default html
-RUN rm -rf /usr/share/nginx/html/*
+# (Optional) Use a slimmer image for runtime / serve static files
+FROM node:18-alpine AS runner
+WORKDIR /app
 
 # Copy build output
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist ./dist
 
-EXPOSE 5000
+# Install a static server
+RUN npm install -g serve
 
-CMD ["serve", "-s", "dist", "-l", "5000"]
+EXPOSE 3000
+
+CMD ["serve", "-s", "dist", "-l", "3000"]
