@@ -1,21 +1,24 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Install bash + fix permissions issue (Alpine needs this)
+# Install bash (optional but helps)
 RUN apk add --no-cache bash
 
 COPY package.json package-lock.json ./
 
-# Install all dependencies including Vite
+# Install dependencies
 RUN npm install
 
 COPY . .
 
-# Fix Vite permission error
+# Fix Vite permission issue
 RUN chmod -R 777 /app/node_modules/.bin
+
+# Build Vite app (creates dist/)
+RUN npm run build
 
 EXPOSE 5000
 
-# Run Vite preview server on port 5000
+# Serve build folder on port 5000
 CMD ["npm", "run", "preview", "--", "--host", "--port", "5000"]
