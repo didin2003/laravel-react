@@ -1,38 +1,18 @@
 FROM node:18-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
-# Ensure /app is owned by node user
-RUN mkdir -p /app && chown -R node:node /app
-
-# Switch to node user
-USER node
-
-# Copy package files
-COPY --chown=node:node package*.json ./
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
 # Install dependencies
-RUN if [ -f package-lock.json ]; then npm ci --silent; else npm install --silent; fi
+RUN npm install
 
-# Explicitly create the .vite folder (or temp folder) with correct permissions
-RUN mkdir -p /app/node_modules/.vite && chown -R node:node /app/node_modules/.vite
-
-# Copy rest of the source
-COPY --chown=node:node . .
-
-# Ensure node_modules/.bin is in PATH
-ENV PATH /app/node_modules/.bin:$PATH
-
-# Build
-RUN npm run build
-
-# (Optional) Runner stage if you want to serve or export the build
-FROM node:18-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-
-# Install static server
-RUN npm install -g serve
+# Copy all files
+COPY . .
 
 EXPOSE 5000
-CMD ["serve", "-s", "dist", "-l", "5000"]
+
+# Build the React app
+RUN npm run build
