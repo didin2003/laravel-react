@@ -1,25 +1,13 @@
 FROM node:18-alpine
 
-# Create working directory with correct permissions
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Copy everything AS ROOT (safe)
 COPY . .
 
-# Ensure correct permissions
-RUN chmod -R 755 /app
-
-# Build Vite (NO permission errors)
-RUN npm run build
-
-# Expose Vite preview port
+# Force Vite preview to run on port 5000
 EXPOSE 5000
 
-# Start production server
-CMD ["npm", "run", "preview", "--", "--host", "5000"]
+CMD ["npm", "run", "preview", "--", "--host", "--port", "5000"]
