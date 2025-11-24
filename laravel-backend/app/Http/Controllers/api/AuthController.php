@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 
 class AuthController extends Controller
@@ -46,6 +47,12 @@ return response()->json([
 
 public function login(Request $request)
 {
+    try {
+DB::connection()->getPdo();
+dd('✅ Connected to database');
+} catch (\Exception $e) {
+dd('❌ Not connected: ' . $e->getMessage());
+}
 $v = Validator::make($request->all(), [
 'email' => 'required|email',
 'password' => 'required|string',
