@@ -47,12 +47,6 @@ return response()->json([
 
 public function login(Request $request)
 {
-    try {
-DB::connection()->getPdo();
-dd('✅ Connected to database');
-} catch (\Exception $e) {
-dd('❌ Not connected: ' . $e->getMessage());
-}
 $v = Validator::make($request->all(), [
 'email' => 'required|email',
 'password' => 'required|string',
