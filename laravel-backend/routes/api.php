@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\AuthController;
-use App\Http\Controllers\api\DashboardController;
+use app\Http\Controllers\api\AuthController;
+use app\Http\Controllers\api\DashboardController;
 
 
 Route::post('register', [AuthController::class, 'register']);
