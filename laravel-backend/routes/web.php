@@ -16,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+// in routes/web.php or routes/api.php
+Route::get('/health', function() {
+    return response('OK', 200);
+});
