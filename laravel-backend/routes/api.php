@@ -13,4 +13,9 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
 Route::get('dashboard', [DashboardController::class, 'index']);
 Route::post('logout', [AuthController::class, 'logout']);
+
+// in routes/web.php or routes/api.php
+Route::get('/health', function() {
+    return response('OK', 200);
+});
 });
