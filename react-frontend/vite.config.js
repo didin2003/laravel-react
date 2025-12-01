@@ -6,6 +6,6 @@ export default defineConfig({
   plugins: [react()],
 
   preview: {
-    allowedHosts: ['*']
+    allowedHosts: ['sonu.didin.in', 'api.didin.in']
   }
 })
